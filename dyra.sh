@@ -35,7 +35,7 @@ done
     3)
 	echo access token:
 	read access_token
-	echo event limit:
+	echo event limit: '(If no limit is set the API deletes 100 files per request)'
 	read event_limit
 	echo user id:
 	read user_id
