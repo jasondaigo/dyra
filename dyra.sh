@@ -105,9 +105,9 @@ done
     2)
 	echo access token:
 	read access_token
-	echo user_id:
-	read userid
-	curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users/$userid | python3 -mjson.tool
+	echo room id:
+	read room_id
+	curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms/$room_id | python3 -mjson.tool
         ;;
     3)
 	echo access token:
