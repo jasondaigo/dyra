@@ -19,8 +19,8 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? '(y/n)'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; exit;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; submenu-users;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; submenu-users;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -49,8 +49,8 @@ done
         while true; do
         read -p "make admin? 'y/n'" yn
         case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": true}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; exit;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": false}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": true}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; submenu-users;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": false}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; submenu-users;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -96,8 +96,8 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? 'y/n'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; exit;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; submenu-rooms;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; submenu-rooms;;
         * ) echo "Please answer yes or no.";;
     esac
 done
