@@ -122,7 +122,7 @@ done
 	read access_token
 	echo purge id:
 	read purge_id
-	curl --header "Authorization: Bearer syt_YWRtaW4_ybujCYYiKOnWtFjgDgMm_0rTZTr" -X GET  http://127.0.0.1:8008/_synapse/admin/v1/purge_history_status/{$purge_id} | python3 -mjson.tool
+	curl --header "Authorization: Bearer ${access_token}" -X GET  http://127.0.0.1:8008/_synapse/admin/v1/purge_history_status/{$purge_id} | python3 -mjson.tool
         ;;
     5)
         menu
