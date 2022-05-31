@@ -19,11 +19,12 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? '(y/n)'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; exit;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; break;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
+	submenu-users
 ;;
     2)
 	echo access token:
@@ -31,6 +32,7 @@ done
 	echo user_id:
 	read userid
 	curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users/$userid | python3 -mjson.tool
+	submenu-users
         ;;
     3)
 	echo access token:
@@ -40,6 +42,7 @@ done
 	echo user id:
 	read user_id
 	curl --header "Authorization: Bearer ${access_token}" -XDELETE $host/_synapse/admin/v1/users/$user_id/media?limit=$event_limit | python3 -mjson.tool
+	submenu-users
         ;;
     4)
 	echo enter access token:
@@ -49,11 +52,12 @@ done
         while true; do
         read -p "make admin? 'y/n'" yn
         case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": true}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; exit;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": false}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": true}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; break;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": false}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
+	submenu-users
         ;;
     5)
 	echo access token:
@@ -63,6 +67,7 @@ done
 	echo email addresse:
 	read email_id
 	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"threepids": [{"medium": "email","address": "'$email_id'"}]}' $host/_synapse/admin/v2/users/$user_id | python3 -mjson.tool
+	submenu-users
         ;;
     6)
         mainmenu
@@ -96,12 +101,12 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? 'y/n'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; exit;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; break;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
-	submenu-misc
+	submenu-rooms
         ;;
     2)
 	echo access token:
@@ -109,6 +114,7 @@ done
 	echo room id:
 	read room_id
 	curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms/$room_id | python3 -mjson.tool
+	submenu-rooms
         ;;
     3)
 	echo access token:
@@ -118,6 +124,7 @@ done
 	echo event id:
 	read event_id
 	curl --header "Authorization: Bearer ${access_token}" -XPOST -d '{"delete_local_events": true}' $host/_synapse/admin/v1/purge_history/\{$room_id}/\{$event_id} | python3 -mjson.tool
+	submenu-rooms
         ;;
     4)
 	echo access token:
@@ -125,6 +132,7 @@ done
 	echo purge id:
 	read purge_id
 	curl --header "Authorization: Bearer ${access_token}" -X GET  $host/_synapse/admin/v1/purge_history_status/{$purge_id} | python3 -mjson.tool
+	submenu-rooms
         ;;
     5)
         mainmenu
@@ -158,16 +166,19 @@ Choose an option:  "
 	echo password:
 	read user_pass
 curl -XPOST -d '{"type":"m.login.password", "user":"'"${user_id}"'", "password":"'"${user_pass}"'"}' $host/_matrix/client/r0/login | python3 -mjson.tool
+	submenu-tokens
         ;;
     2)
 	echo access token:
 	read access_token
 	curl --header "Authorization: Bearer ${access_token}" -X GET $host/_synapse/admin/v1/registration_tokens | python3 -mjson.tool
+	submenu-tokens
         ;;
     3)
 	echo access token:
 	read access_token
 	curl --header "Authorization: Bearer ${access_token}" -X POST -H "Content-Type: application/json" -d {} $host/_synapse/admin/v1/registration_tokens/new | python3 -mjson.tool
+	submenu-tokens
         ;;
     4)
 	echo enter admin access token:
@@ -175,6 +186,7 @@ curl -XPOST -d '{"type":"m.login.password", "user":"'"${user_id}"'", "password":
 	echo token id:
 	read token_id
 	curl --header "Authorization: Bearer ${access_token}" -X DELETE  $host/_synapse/admin/v1/registration_tokens/\{$token_id} | python3 -mjson.tool
+	submenu-tokens
         ;;
     5)
         mainmenu
@@ -238,9 +250,7 @@ Choose an option:  "
 	read room_id
 	echo event id:
 	read event_id
-	#echo txnid:
-	#read txn_id
-	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/${room_id}/redact/$event_id/$RANDOM | python3 -mjson.tool
+	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/${room_id}/redact/$event_id/{$RANDOM} | python3 -mjson.tool
 	submenu-misc
         ;;
     6)
