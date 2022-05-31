@@ -228,7 +228,7 @@ Choose an option:  "
     3)
 	echo access token:
 	read access_token
-	echo epoch timestamp:
+	echo epoch timestamp: '(see https://www.epochconverter.com)'
 	read epochms
 	curl --header "Authorization: Bearer ${access_token}" -XPOST $host/_synapse/admin/v1/purge_media_cache?before_ts=$epochms | python3 -mjson.tool
 	submenu-misc
@@ -238,7 +238,7 @@ Choose an option:  "
 	read access_token
 	echo server name:
 	read server_name
-	echo epoch timestamp:
+	echo epoch timestamp: '(see https://www.epochconverter.com)'
 	read epochms
 	curl --header "Authorization: Bearer ${access_token}" -XPOST $host/_synapse/admin/v1/media/$server_name/delete?before_ts=$epochms | python3 -mjson.tool
 	submenu-misc
