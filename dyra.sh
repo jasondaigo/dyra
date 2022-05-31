@@ -19,8 +19,8 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? '(y/n)'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; submenu-users;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; submenu-users;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; exit;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; exit;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -35,7 +35,7 @@ done
     3)
 	echo access token:
 	read access_token
-	echo event limit: '(If no limit is set the API deletes 100 files per request)'
+	echo event limit: '(number of events to get purged)'
 	read event_limit
 	echo user id:
 	read user_id
@@ -49,8 +49,8 @@ done
         while true; do
         read -p "make admin? 'y/n'" yn
         case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": true}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; submenu-users;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": false}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; submenu-users;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": true}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; exit;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"admin": false}' $host/_synapse/admin/v1/users/$user_id/admin | python3 -mjson.tool; exit;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -96,11 +96,12 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? 'y/n'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; submenu-rooms;;
-        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; submenu-rooms;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; exit;;
+        [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; exit;;
         * ) echo "Please answer yes or no.";;
     esac
 done
+	submenu-misc
         ;;
     2)
 	echo access token:
@@ -204,11 +205,13 @@ Choose an option:  "
     case $ans in
     1)
 	curl -XGET $host/_synapse/admin/v1/server_version | python3 -mjson.tool
+	submenu-misc
         ;;
     2)
 	echo access token:
 	read access_token
 	curl --header "Authorization: Bearer ${access_token}" -XGET "$host/_synapse/admin/v1/event_reports?from=0&limit=10" | python3 -mjson.tool
+	submenu-misc
         ;;
     3)
 	echo access token:
@@ -216,6 +219,7 @@ Choose an option:  "
 	echo epoch timestamp:
 	read epochms
 	curl --header "Authorization: Bearer ${access_token}" -XPOST $host/_synapse/admin/v1/purge_media_cache?before_ts=$epochms | python3 -mjson.tool
+	submenu-misc
         ;;
     4)
 	echo access token:
@@ -225,6 +229,7 @@ Choose an option:  "
 	echo epoch timestamp:
 	read epochms
 	curl --header "Authorization: Bearer ${access_token}" -XPOST $host/_synapse/admin/v1/media/$server_name/delete?before_ts=$epochms | python3 -mjson.tool
+	submenu-misc
         ;;
     5)
 	echo access token:
@@ -235,7 +240,8 @@ Choose an option:  "
 	read event_id
 	#echo txnid:
 	#read txn_id
-	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/$room_id/redact/$event_id/$RANDOM | python3 -mjson.tool
+	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/${room_id}/redact/$event_id/$RANDOM | python3 -mjson.tool
+	submenu-misc
         ;;
     6)
         mainmenu
