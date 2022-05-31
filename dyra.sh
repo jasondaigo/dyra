@@ -9,7 +9,7 @@ SUBMENU
 3) purge user media 
 4) admin/ deadmin
 5) change user email addresse (primary)
-7) back 
+6) back 
 0) Exit
 Choose an option:  "
     read -r ans
@@ -17,9 +17,9 @@ Choose an option:  "
     1)	echo enter access token:
 	read access_token
 	while true; do
-	read -p "save output file? 'y/n'" yn
+	read -p "save output file? '(y/n)'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; exit;;
         [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; exit;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -65,7 +65,7 @@ done
 	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"threepids": [{"medium": "email","address": "'$email_id'"}]}' $host/_synapse/admin/v2/users/$user_id | python3 -mjson.tool
         ;;
     6)
-        menu
+        mainmenu
         ;;
     0)
         echo "have a nice day :-)"
@@ -85,6 +85,7 @@ SUBMENU
 2) list room details 
 3) purge room history
 4) purge status 
+5) back 
 0) Exit
 Choose an option:  "
     read -r ans
@@ -95,7 +96,7 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? 'y/n'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; exit;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool >> roomlist.txt; echo output saved as roomlist.txt; exit;;
         [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms?order_by=size | python3 -mjson.tool; exit;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -125,7 +126,7 @@ done
 	curl --header "Authorization: Bearer ${access_token}" -X GET  $host/_synapse/admin/v1/purge_history_status/{$purge_id} | python3 -mjson.tool
         ;;
     5)
-        menu
+        mainmenu
         ;;
     0)
         echo "have a nice day :-)"
@@ -145,6 +146,7 @@ SUBMENU
 2) list all registration tokens
 3) create new registration token
 4) delete registration token
+5) back
 0) Exit
 Choose an option:  "
     read -r ans
@@ -174,7 +176,7 @@ curl -XPOST -d '{"type":"m.login.password", "user":"'"${user_id}"'", "password":
 	curl --header "Authorization: Bearer ${access_token}" -X DELETE  $host/_synapse/admin/v1/registration_tokens/\{$token_id} | python3 -mjson.tool
         ;;
     5)
-        menu
+        mainmenu
         ;;
     0)
         echo "have a nice day :-)"
@@ -236,7 +238,7 @@ Choose an option:  "
 	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/$room_id/redact/$event_id/$RANDOM | python3 -mjson.tool
         ;;
     6)
-        menu
+        mainmenu
         ;;
     0)
         echo "have a nice day :-)"
