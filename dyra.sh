@@ -90,7 +90,8 @@ SUBMENU
 2) list room details 
 3) purge room history
 4) purge status 
-5) back 
+5) delete_room (actually rename,block and kick users) 
+6) back 
 0) Exit
 Choose an option:  "
     read -r ans
@@ -135,6 +136,18 @@ done
 	submenu-rooms
         ;;
     5)
+	echo access token:
+	read access_token
+	echo room id:
+	read room_id
+	echo new room owner:
+	read new_room_owner
+	echo new room name:
+	read new_room_name
+	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"new_room_user_id":"'"${new_room_owner}"'","room_name":"'"${new_room_name}"'", "message": "Bad Room has been shutdown due to content violations on this server. Please review our Terms of Service.", "block": true, "purge": true }' $host/_synapse/admin/v1/rooms/\{$room_id} | python3 -mjson.tool
+
+	;;
+    6)
         mainmenu
         ;;
     0)
