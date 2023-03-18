@@ -9,7 +9,8 @@ SUBMENU
 3) purge user media 
 4) admin/ deadmin
 5) change user email addresse (primary)
-6) back 
+6) reset password/logout sessions
+7) back 
 0) Exit
 Choose an option:  "
     read -r ans
@@ -70,6 +71,16 @@ done
 	submenu-users
         ;;
     6)
+	echo access token:
+	read access_token
+	echo user id:
+	read user_id
+	echo new password:
+	read new_pass 
+	curl --header "Authorization: Bearer ${access_token}" -XPOST -d '{"new_password": "'$new_pass'", "logout_devices": true}'  $host/_synapse/admin/v1/reset_password/$user_id | python3 -mjson.tool
+	submenu-users
+        ;;
+    7)
         mainmenu
         ;;
     0)
