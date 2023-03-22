@@ -10,7 +10,7 @@ SUBMENU
 4) admin/ deadmin
 5) change user email addresse (primary)
 6) reset password/logout sessions
-7) back 
+9) back 
 0) Exit
 Choose an option:  "
     read -r ans
@@ -80,7 +80,7 @@ done
 	curl --header "Authorization: Bearer ${access_token}" -XPOST -d '{"new_password": "'$new_pass'", "logout_devices": true}'  $host/_synapse/admin/v1/reset_password/$user_id | python3 -mjson.tool
 	submenu-users
         ;;
-    7)
+    9)
         mainmenu
         ;;
     0)
@@ -101,8 +101,9 @@ SUBMENU
 2) list room details 
 3) purge room history
 4) purge status 
-5) delete_room (actually rename,block and kick users) 
-6) back 
+5) move/rename room 
+6) delete room 
+9) back 
 0) Exit
 Choose an option:  "
     read -r ans
@@ -155,10 +156,16 @@ done
 	read new_room_owner
 	echo new room name:
 	read new_room_name
-	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"new_room_user_id":"'"${new_room_owner}"'","room_name":"'"${new_room_name}"'", "message": "Bad Room has been shutdown due to content violations on this server. Please review our Terms of Service.", "block": true, "purge": true }' $host/_synapse/admin/v1/rooms/\{$room_id} | python3 -mjson.tool
-
+	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"new_room_user_id":"'"${new_room_owner}"'","room_name":"'"${new_room_name}"'", "block": true, "purge": true }' $host/_synapse/admin/v1/rooms/\{$room_id} | python3 -mjson.tool
 	;;
     6)
+	echo access token:
+	read access_token
+	echo room id:
+	read room_id
+	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{ "purge": true }' $host/_synapse/admin/v2/rooms/\{$room_id} | python3 -mjson.tool
+	;;
+    9)
         mainmenu
         ;;
     0)
@@ -179,7 +186,7 @@ SUBMENU
 2) list all registration tokens
 3) create new registration token
 4) delete registration token
-5) back
+9) back
 0) Exit
 Choose an option:  "
     read -r ans
@@ -212,7 +219,7 @@ curl -XPOST -d '{"type":"m.login.password", "user":"'"${user_id}"'", "password":
 	curl --header "Authorization: Bearer ${access_token}" -X DELETE  $host/_synapse/admin/v1/registration_tokens/\{$token_id} | python3 -mjson.tool
 	submenu-tokens
         ;;
-    5)
+    9)
         mainmenu
         ;;
     0)
@@ -234,7 +241,7 @@ SUBMENU
 3) purge remote media
 4) purge local media
 5) redact event
-6) back
+9) back
 0) Exit
 Choose an option:  "
     read -r ans
@@ -277,7 +284,7 @@ Choose an option:  "
 	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/${room_id}/redact/$event_id/{$RANDOM} | python3 -mjson.tool
 	submenu-misc
         ;;
-    6)
+    9)
         mainmenu
         ;;
     0)
