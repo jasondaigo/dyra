@@ -7,9 +7,11 @@ SUBMENU
 1) list all users 
 2) list specific user 
 3) purge user media 
-4) admin/ deadmin
-5) change user email addresse (primary)
+4) admin/deadmin
+5) set user email addresse (primary)
 6) reset password/logout sessions
+7) deactivate account (also mark erased) ## read https://matrix-org.github.io/synapse/latest/admin_api/user_admin_api.html#deactivate-account
+8) re-activate account
 9) back 
 0) Exit
 Choose an option:  "
@@ -20,7 +22,7 @@ Choose an option:  "
 	while true; do
 	read -p "save output file? '(y/n)'" yn
 	case $yn in
-        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as userlist.txt; break;;
+        [Yy]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool >> userlist.txt; echo output saved as ./userlist.txt; break;;
         [Nn]* ) curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users | python3 -mjson.tool; break;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -38,11 +40,12 @@ done
     3)
 	echo access token:
 	read access_token
-	echo event limit: '(number of events to get purged)'
-	read event_limit
+#	echo event limit: '(number of events to get purged)'
+#	read event_limit
 	echo user id:
 	read user_id
-	curl --header "Authorization: Bearer ${access_token}" -XDELETE $host/_synapse/admin/v1/users/$user_id/media?limit=$event_limit | python3 -mjson.tool
+#	curl --header "Authorization: Bearer ${access_token}" -XDELETE $host/_synapse/admin/v1/users/$user_id/media?limit=$event_limit | python3 -mjson.tool
+	curl --header "Authorization: Bearer ${access_token}" -XDELETE $host/_synapse/admin/v1/users/$user_id/media | python3 -mjson.tool
 	submenu-users
         ;;
     4)
@@ -79,6 +82,23 @@ done
 	read new_pass 
 	curl --header "Authorization: Bearer ${access_token}" -XPOST -d '{"new_password": "'$new_pass'", "logout_devices": true}'  $host/_synapse/admin/v1/reset_password/$user_id | python3 -mjson.tool
 	submenu-users
+        ;;
+    7)
+	echo access token:
+	read access_token
+	echo user id:
+	read user_id
+	curl  --header "Authorization: Bearer ${access_token}" -XPOST -d '{"erase": true }' $host/_synapse/admin/v1/deactivate/$user_id | python3 -mjson.tool	
+	submenu-users
+        ;;
+    8)
+	echo access token:
+	read access_token
+	echo user id:
+	read user_id
+	echo new_password:
+	read new_pass
+	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"deactivated": false, "password": "'$new_pass'"}' $host/_synapse/admin/v2/users/$user_id | python3 -mjson.tool
         ;;
     9)
         mainmenu
@@ -157,13 +177,15 @@ done
 	echo new room name:
 	read new_room_name
 	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"new_room_user_id":"'"${new_room_owner}"'","room_name":"'"${new_room_name}"'", "block": true, "purge": true }' $host/_synapse/admin/v1/rooms/\{$room_id} | python3 -mjson.tool
+	submenu-rooms
 	;;
     6)
 	echo access token:
 	read access_token
 	echo room id:
 	read room_id
-	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{ "purge": true }' $host/_synapse/admin/v2/rooms/\{$room_id} | python3 -mjson.tool
+	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"block": true,  "purge": true}' $host/_synapse/admin/v2/rooms/\{$room_id} | python3 -mjson.tool
+	submenu-rooms
 	;;
     9)
         mainmenu
