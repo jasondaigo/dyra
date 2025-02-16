@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-host=http://127.0.0.1:8008 ## <-- could be changed to different host ip/port (or url, if api endpoint is exposed)
+read -e -p "edit hostname: " -i "http://127.0.0.1:8008" host
+echo $host
+echo -n "enter access_token: " 
+read access_token
+## host can be changed to different host ip/port (or FQDN, if api endpoint is exposed there)
 # more api commands here https://matrix-org.github.io/synapse/latest/usage/administration/admin_api/index.html
 submenu-users() {
     echo -ne "
 SUBMENU
-1) list all users 
+1) list all users # This is an inline comment
 2) list specific user 
 3) purge user media 
 4) admin/deadmin
@@ -12,13 +16,12 @@ SUBMENU
 6) reset password/logout sessions
 7) deactivate account (also mark erased) ## read https://matrix-org.github.io/synapse/latest/admin_api/user_admin_api.html#deactivate-account
 8) re-activate account
-9) back 
-0) Exit
+b) back 
+e) exit
 Choose an option:  "
     read -r ans
     case $ans in
-    1)	echo enter access token:
-	read access_token
+    1)
 	while true; do
 	read -p "save output file? '(y/n)'" yn
 	case $yn in
@@ -30,27 +33,18 @@ done
 	submenu-users
 ;;
     2)
-	echo access token:
-	read access_token
 	echo user_id:
 	read userid
 	curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v2/users/$userid | python3 -mjson.tool
 	submenu-users
         ;;
     3)
-	echo access token:
-	read access_token
-#	echo event limit: '(number of events to get purged)'
-#	read event_limit
 	echo user id:
 	read user_id
-#	curl --header "Authorization: Bearer ${access_token}" -XDELETE $host/_synapse/admin/v1/users/$user_id/media?limit=$event_limit | python3 -mjson.tool
 	curl --header "Authorization: Bearer ${access_token}" -XDELETE $host/_synapse/admin/v1/users/$user_id/media | python3 -mjson.tool
 	submenu-users
         ;;
     4)
-	echo enter access token:
-        read access_token
 	echo user id:
 	read user_id
         while true; do
@@ -64,8 +58,6 @@ done
 	submenu-users
         ;;
     5)
-	echo access token:
-	read access_token
 	echo user id:
 	read user_id
 	echo email addresse:
@@ -74,8 +66,6 @@ done
 	submenu-users
         ;;
     6)
-	echo access token:
-	read access_token
 	echo user id:
 	read user_id
 	echo new password:
@@ -84,26 +74,22 @@ done
 	submenu-users
         ;;
     7)
-	echo access token:
-	read access_token
 	echo user id:
 	read user_id
 	curl  --header "Authorization: Bearer ${access_token}" -XPOST -d '{"erase": true }' $host/_synapse/admin/v1/deactivate/$user_id | python3 -mjson.tool	
 	submenu-users
         ;;
     8)
-	echo access token:
-	read access_token
 	echo user id:
 	read user_id
 	echo new_password:
 	read new_pass
 	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"deactivated": false, "password": "'$new_pass'"}' $host/_synapse/admin/v2/users/$user_id | python3 -mjson.tool
         ;;
-    9)
+    b)
         mainmenu
         ;;
-    0)
+    e)
         echo "have a nice day :-)"
         exit 0
         ;;
@@ -123,14 +109,12 @@ SUBMENU
 4) purge status 
 5) move/rename room 
 6) delete room 
-9) back 
-0) Exit
+b) back 
+e) exit
 Choose an option:  "
     read -r ans
     case $ans in
     1)
-	echo Access Token:
-	read access_token
 	while true; do
 	read -p "save output file? 'y/n'" yn
 	case $yn in
@@ -142,16 +126,12 @@ done
 	submenu-rooms
         ;;
     2)
-	echo access token:
-	read access_token
 	echo room id:
 	read room_id
 	curl --header "Authorization: Bearer ${access_token}" -XGET $host/_synapse/admin/v1/rooms/$room_id | python3 -mjson.tool
 	submenu-rooms
         ;;
     3)
-	echo access token:
-	read access_token
 	echo room id:
 	read room_id
 	echo event id:
@@ -160,16 +140,12 @@ done
 	submenu-rooms
         ;;
     4)
-	echo access token:
-	read access_token
 	echo purge id:
 	read purge_id
 	curl --header "Authorization: Bearer ${access_token}" -X GET  $host/_synapse/admin/v1/purge_history_status/{$purge_id} | python3 -mjson.tool
 	submenu-rooms
         ;;
     5)
-	echo access token:
-	read access_token
 	echo room id:
 	read room_id
 	echo new room owner:
@@ -180,17 +156,15 @@ done
 	submenu-rooms
 	;;
     6)
-	echo access token:
-	read access_token
 	echo room id:
 	read room_id
 	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"block": true,  "purge": true}' $host/_synapse/admin/v2/rooms/\{$room_id} | python3 -mjson.tool
 	submenu-rooms
 	;;
-    9)
+    b)
         mainmenu
         ;;
-    0)
+    e)
         echo "have a nice day :-)"
         exit 0
         ;;
@@ -208,8 +182,8 @@ SUBMENU
 2) list all registration tokens
 3) create new registration token
 4) delete registration token
-9) back
-0) Exit
+b) back
+e) exit
 Choose an option:  "
     read -r ans
     case $ans in
@@ -222,29 +196,23 @@ curl -XPOST -d '{"type":"m.login.password", "user":"'"${user_id}"'", "password":
 	submenu-tokens
         ;;
     2)
-	echo access token:
-	read access_token
 	curl --header "Authorization: Bearer ${access_token}" -X GET $host/_synapse/admin/v1/registration_tokens | python3 -mjson.tool
 	submenu-tokens
         ;;
     3)
-	echo access token:
-	read access_token
 	curl --header "Authorization: Bearer ${access_token}" -X POST -H "Content-Type: application/json" -d {} $host/_synapse/admin/v1/registration_tokens/new | python3 -mjson.tool
 	submenu-tokens
         ;;
     4)
-	echo enter admin access token:
-	read access_token
 	echo token id:
 	read token_id
 	curl --header "Authorization: Bearer ${access_token}" -X DELETE  $host/_synapse/admin/v1/registration_tokens/\{$token_id} | python3 -mjson.tool
 	submenu-tokens
         ;;
-    9)
+    b)
         mainmenu
         ;;
-    0)
+    e)
         echo "have a nice day :-)"
         exit 0
         ;;
@@ -258,13 +226,14 @@ curl -XPOST -d '{"type":"m.login.password", "user":"'"${user_id}"'", "password":
 submenu-misc() {
     echo -ne "
 SUBMENU
-1) server version 
+1) server version
 2) event reports
-3) purge remote media
-4) purge local media
-5) redact event
-9) back
-0) Exit
+3) delete report
+4) purge remote media
+5) purge local media
+6) redact event
+b) back
+e) exit
 Choose an option:  "
     read -r ans
     case $ans in
@@ -273,32 +242,30 @@ Choose an option:  "
 	submenu-misc
         ;;
     2)
-	echo access token:
-	read access_token
 	curl --header "Authorization: Bearer ${access_token}" -XGET "$host/_synapse/admin/v1/event_reports?from=0&limit=10" | python3 -mjson.tool
 	submenu-misc
         ;;
     3)
-	echo access token:
-	read access_token
+	echo report id:
+	read report_id
+	curl --header "Authorization: Bearer ${access_token}" -X DELETE  $host/_synapse/admin/v1/event_reports/\{$report_id} | python3 -mjson.tool
+	submenu-misc
+        ;;
+    4)
 	echo epoch timestamp: '(see https://www.epochconverter.com)'
 	read epochms
 	curl --header "Authorization: Bearer ${access_token}" -XPOST $host/_synapse/admin/v1/purge_media_cache?before_ts=$epochms | python3 -mjson.tool
 	submenu-misc
         ;;
-    4)
-	echo access token:
-	read access_token
+    5)
 	echo server name:
 	read server_name
-	echo epoch timestamp: '(see https://www.epochconverter.com)'
+	echo epoch timestamp: '(in milliseconds ,see https://www.epochconverter.com)'
 	read epochms
 	curl --header "Authorization: Bearer ${access_token}" -XPOST $host/_synapse/admin/v1/media/$server_name/delete?before_ts=$epochms | python3 -mjson.tool
 	submenu-misc
         ;;
-    5)
-	echo access token:
-	read access_token
+    6)
 	echo room id:
 	read room_id
 	echo event id:
@@ -306,10 +273,10 @@ Choose an option:  "
 	curl --header "Authorization: Bearer ${access_token}" -XPUT -d '{"reason": "spamming"}' $host/_matrix/client/v3/rooms/${room_id}/redact/$event_id/{$RANDOM} | python3 -mjson.tool
 	submenu-misc
         ;;
-    9)
+    b)
         mainmenu
         ;;
-    0)
+    e)
         echo "have a nice day :-)"
         exit 0
         ;;
@@ -327,7 +294,7 @@ MAIN MENU
 2) rooms
 3) tokens
 4) misc
-0) exit
+e) exit
 Choose an option:  "
     read -r ans
     case $ans in
@@ -347,7 +314,7 @@ Choose an option:  "
         submenu-misc
         mainmenu
         ;;
-    0)
+    e)
         echo "have a nice day :-)"
         exit 0
         ;;
@@ -357,5 +324,4 @@ Choose an option:  "
         ;;
     esac
 }
-
 mainmenu
