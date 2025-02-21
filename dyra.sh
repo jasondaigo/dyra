@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-read -e -p "edit hostname: " -i "http://127.0.0.1:8008" host
+read -e -p "enter hostname: " -i "http://127.0.0.1:8008" host
 echo $host
 echo -n "enter access_token: " 
 read access_token
