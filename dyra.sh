@@ -8,7 +8,7 @@ read access_token
 submenu-users() {
     echo -ne "
 SUBMENU
-1) list all users # This is an inline comment
+1) list all users
 2) list specific user 
 3) purge user media 
 4) admin/deadmin
