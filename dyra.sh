@@ -109,6 +109,7 @@ SUBMENU
 4) purge status 
 5) move/rename room 
 6) delete room 
+7) delete status
 b) back 
 e) exit
 Choose an option:  "
@@ -160,6 +161,11 @@ done
 	read room_id
 	curl --header "Authorization: Bearer ${access_token}" -XDELETE -d '{"block": true,  "purge": true}' $host/_synapse/admin/v2/rooms/\{$room_id} | python3 -mjson.tool
 	submenu-rooms
+	;;
+    7)
+	echo delete id:
+	read delete_id
+	curl --header "Authorization: Bearer ${access_token}" -X GET  $host/_synapse/admin/v2/rooms/delete_status/{$delete_id} | python3 -mjson.tool
 	;;
     b)
         mainmenu
